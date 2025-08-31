@@ -1,0 +1,114 @@
+/* Copyright 2022 Dennis Kruyt (dennis@kruyt.org)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include QMK_KEYBOARD_H
+
+enum custom_layers {
+  _DVORAK,
+  _LRAISE,
+  _RRAISE,
+  _SYSTEM,
+};
+
+enum custom_keycodes {
+  PLOVER = SAFE_RANGE,
+  BACKLIT,
+  EXT_PLV,
+  KC_TEST,
+};
+
+#define LOWER MO(_LOWER)
+#define RAISE MO(_RAISE)
+
+#define QWERTY PDF(_QWERTY)
+#define COLEMAK PDF(_COLEMAK)
+#define DVORAK PDF(_DVORAK)
+
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+
+    [_DVORAK] = LAYOUT_ortho_4x12(
+        KC_TAB,   KC_QUOT,  KC_COMM,  KC_DOT,   KC_P,   KC_Y,    KC_F,    KC_G,   KC_C,     KC_R,     KC_L,   KC_BSPC,
+        KC_ESC,   KC_A,     KC_O,     KC_E,     KC_U,   KC_I,    KC_D,    KC_H,   KC_T,     KC_N,     KC_S,   KC_ENT,
+        KC_LSFT,  KC_SCLN,  KC_Q,     KC_J,     KC_K,   KC_X,    KC_B,    KC_M,   KC_W,     KC_V,     KC_Z,   KC_RSFT,
+        KC_LGUI,  KC_GRV,   KC_LALT,  KC_LCTL,  MO(1),  KC_SPC,  KC_SPC,  MO(2),  KC_LEFT,  KC_DOWN,  KC_UP,  KC_RGHT
+    ),
+
+    [_LRAISE] = LAYOUT_ortho_4x12(
+        RCS(KC_TAB),  LCTL(KC_R),  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB),  KC_NO,    KC_NO,   KC_NO,    KC_NO,    KC_NO,    KC_BSPC,
+        KC_DEL,       LCTL(KC_C),  KC_6,     KC_5,     KC_4,     KC_NO,         KC_NO,    KC_EQL,  KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
+        KC_TRNS,      LCTL(KC_V),  KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_BSLS,  KC_TRNS,
+        KC_TRNS,      LCTL(KC_W),  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,       KC_TRNS,  MO(3),   KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
+    ),
+
+    [_RRAISE] = LAYOUT_ortho_4x12(
+        KC_GRV,   KC_EXLM,  KC_AT,    KC_HASH,  KC_PERC,  KC_LCBR,     KC_RCBR,  KC_AMPR,  KC_CIRC,  KC_PAST,  KC_QUES,  KC_TRNS,
+        KC_DEL,   KC_QUOT,  KC_LPRN,  KC_RPRN,  KC_UNDS,  KC_MINS,     KC_DLR,   KC_EQL,   KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
+        KC_TRNS,  KC_PPLS,  KC_NO,    KC_NO,    KC_NO,    LALT(KC_E),  KC_TILD,  KC_LT,    KC_GT,    KC_BSLS,  KC_PIPE,  KC_TRNS,
+        KC_1,     KC_TRNS,  KC_TRNS,  KC_TRNS,  MO(3),    KC_TRNS,     KC_TRNS,  KC_TRNS,  KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
+    ),
+
+    [_SYSTEM] = LAYOUT_ortho_4x12(
+        QK_BOOT,  UG_TOGG,  UG_HUEU,  UG_SATU,  UG_VALU,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  DB_TOGG,
+        PLOVER,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  AG_NORM,  AG_SWAP,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+        KC_TEST,  UG_PREV,  RGB_SPD,  RGB_SPI,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_MRWD,  KC_TRNS,  KC_TRNS,  KC_MFFD
+    ),
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case BACKLIT:
+      if (record->event.pressed) {
+        register_code(KC_RSFT);
+        #ifdef BACKLIGHT_ENABLE
+          backlight_step();
+        #endif
+        #ifdef KEYBOARD_planck_rev5
+          gpio_write_pin_low(E6);
+        #endif
+      } else {
+        unregister_code(KC_RSFT);
+        #ifdef KEYBOARD_planck_rev5
+          gpio_write_pin_high(E6);
+        #endif
+      }
+      return false;
+      break;
+    case PLOVER:
+      if (record->event.pressed) {
+        #ifdef AUDIO_ENABLE
+          stop_all_notes();
+          audio_set_tempo(30);
+          rgb_matrix_mode(RGB_MATRIX_CUSTOM_star_wars);
+          PLAY_SONG(imperial);
+        #endif
+      }
+      return false;
+      break;
+    case KC_TEST:
+      if (record->event.pressed) {
+        #ifdef AUDIO_ENABLE
+          // stop_all_notes();
+          // audio_set_tempo(30);
+          rgb_matrix_mode(RGB_MATRIX_CUSTOM_star_wars);
+          // PLAY_SONG(imperial);
+        #endif
+      }
+      return false;
+      break;
+   }
+  return true;
+}
