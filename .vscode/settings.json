@@ -35,6 +35,7 @@
     "[json]": {
         "editor.formatOnSave": false
     },
+    "python.defaultInterpreterPath": "/home/josecaliz/.local/share/pipx/venvs/qmk/bin/python",
     "clangd.arguments": [
         "--header-insertion=never"
     ],
