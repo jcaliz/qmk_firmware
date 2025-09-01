@@ -14,7 +14,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <avr/io.h>
+#include "action.h"
+#include "quantum.h"
+#include "unicode.h"
 #include QMK_KEYBOARD_H
+#include "print.h"
 
 enum custom_layers {
   _DVORAK,
@@ -28,6 +33,45 @@ enum custom_keycodes {
   BACKLIT,
   EXT_PLV,
   KC_TEST,
+  KC_DEAD,
+};
+
+enum unicode_names {
+    L_ACCENT_A,
+    U_ACCENT_A,
+    L_ACCENT_E,
+    U_ACCENT_E,
+    L_ACCENT_I,
+    U_ACCENT_I,
+    L_ACCENT_O,
+    U_ACCENT_O,
+    L_ACCENT_U,
+    U_ACCENT_U,
+    L_ACCENT_U_DIA,
+    U_ACCENT_U_DIA,
+    L_ACCENT_N_TILDE,
+    U_ACCENT_N_TILDE,
+    L_ACCENT_INVERTED_QUES,
+    U_ACCENT_INVERTED_QUES,
+};
+
+const uint32_t unicode_map[] = {
+    [L_ACCENT_A] = 0x00E1,
+    [U_ACCENT_A] = 0x00C1,
+    [L_ACCENT_E] = 0x00E9,
+    [U_ACCENT_E] = 0x00C9,
+    [L_ACCENT_I] = 0x00ED,
+    [U_ACCENT_I] = 0x00CD,
+    [L_ACCENT_O] = 0x00F3,
+    [U_ACCENT_O] = 0x00D3,
+    [L_ACCENT_U] = 0x00FA,
+    [U_ACCENT_U] = 0x00DA,
+    [L_ACCENT_U_DIA] = 0x00FC,
+    [U_ACCENT_U_DIA] = 0x00DC,
+    [L_ACCENT_N_TILDE] = 0x00F1,
+    [U_ACCENT_N_TILDE] = 0x00D1,
+    [L_ACCENT_INVERTED_QUES] = 0x00BF,
+    [U_ACCENT_INVERTED_QUES] = 0x00BF,
 };
 
 #define LOWER MO(_LOWER)
@@ -36,6 +80,8 @@ enum custom_keycodes {
 #define QWERTY PDF(_QWERTY)
 #define COLEMAK PDF(_COLEMAK)
 #define DVORAK PDF(_DVORAK)
+
+bool accent_enabled = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -56,59 +102,86 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_RRAISE] = LAYOUT_ortho_4x12(
         KC_GRV,   KC_EXLM,  KC_AT,    KC_HASH,  KC_PERC,  KC_LCBR,     KC_RCBR,  KC_AMPR,  KC_CIRC,  KC_PAST,  KC_QUES,  KC_TRNS,
         KC_DEL,   KC_QUOT,  KC_LPRN,  KC_RPRN,  KC_UNDS,  KC_MINS,     KC_DLR,   KC_EQL,   KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
-        KC_TRNS,  KC_PPLS,  KC_NO,    KC_NO,    KC_NO,    LALT(KC_E),  KC_TILD,  KC_LT,    KC_GT,    KC_BSLS,  KC_PIPE,  KC_TRNS,
+        KC_TRNS,  KC_PPLS,  KC_NO,    KC_NO,    KC_NO,    KC_DEAD,     KC_TILD,  KC_LT,    KC_GT,    KC_BSLS,  KC_PIPE,  KC_TRNS,
         KC_1,     KC_TRNS,  KC_TRNS,  KC_TRNS,  MO(3),    KC_TRNS,     KC_TRNS,  KC_TRNS,  KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
     ),
 
     [_SYSTEM] = LAYOUT_ortho_4x12(
         QK_BOOT,  UG_TOGG,  UG_HUEU,  UG_SATU,  UG_VALU,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  DB_TOGG,
-        PLOVER,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  AG_NORM,  AG_SWAP,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
-        KC_TEST,  UG_PREV,  RGB_SPD,  RGB_SPI,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
+        PLOVER,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  AG_NORM,  AG_SWAP,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  UC_LINX,
+        KC_TEST,  UG_PREV,  RGB_SPD,  RGB_SPI,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  UC_NEXT,
         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_MRWD,  KC_TRNS,  KC_TRNS,  KC_MFFD
     ),
 };
 
+void send_accented(enum unicode_names lower, enum unicode_names upper) {
+    bool shifted = get_mods() & MOD_MASK_SHIFT;
+    uint32_t codepoint = shifted ? unicode_map[upper] : unicode_map[lower];
+    register_unicode(codepoint);
+    accent_enabled = false;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case BACKLIT:
-      if (record->event.pressed) {
-        register_code(KC_RSFT);
-        #ifdef BACKLIGHT_ENABLE
-          backlight_step();
+    #ifdef CONSOLE_ENABLE
+        #ifdef KEYCODE_STRING_ENABLE
+            uprintf("kc: %s\n", get_keycode_string(keycode));
         #endif
-        #ifdef KEYBOARD_planck_rev5
-          gpio_write_pin_low(E6);
-        #endif
-      } else {
-        unregister_code(KC_RSFT);
-        #ifdef KEYBOARD_planck_rev5
-          gpio_write_pin_high(E6);
-        #endif
-      }
-      return false;
-      break;
-    case PLOVER:
-      if (record->event.pressed) {
-        #ifdef AUDIO_ENABLE
-          stop_all_notes();
-          audio_set_tempo(30);
-          rgb_matrix_mode(RGB_MATRIX_CUSTOM_star_wars);
-          PLAY_SONG(imperial);
-        #endif
-      }
-      return false;
-      break;
-    case KC_TEST:
-      if (record->event.pressed) {
-        #ifdef AUDIO_ENABLE
-          // stop_all_notes();
-          // audio_set_tempo(30);
-          rgb_matrix_mode(RGB_MATRIX_CUSTOM_star_wars);
-          // PLAY_SONG(imperial);
-        #endif
-      }
-      return false;
-      break;
-   }
-  return true;
+    #endif
+
+    if (accent_enabled) {
+        switch (keycode) {
+            case KC_A:
+                send_accented(L_ACCENT_A, U_ACCENT_A);
+                return false;
+
+            case KC_E:
+                send_accented(L_ACCENT_E, U_ACCENT_E);
+                return false;
+
+            case KC_I:
+                send_accented(L_ACCENT_I, U_ACCENT_I);
+                return false;
+
+            case KC_O:
+                send_accented(L_ACCENT_O, U_ACCENT_O);
+                return false;
+
+            case KC_U:
+                send_accented(L_ACCENT_U, U_ACCENT_U);
+                return false;
+
+            case KC_N:
+                send_accented(L_ACCENT_N_TILDE, U_ACCENT_N_TILDE);
+                return false;
+
+            case KC_QUES: // inverted question mark
+                send_accented(L_ACCENT_INVERTED_QUES, U_ACCENT_INVERTED_QUES);
+                return false;
+
+            default:
+                return true; // normal key
+        }
+    }
+
+    switch (keycode) {
+        case BACKLIT:
+            return false;
+            break;
+        case PLOVER:
+            #ifdef RGB_MATRIX_CUSTOM_USER
+                rgb_matrix_mode(RGB_MATRIX_CUSTOM_STARLIGHT);
+            #endif
+            return false;
+        break;
+            case KC_TEST:
+            return false;
+            break;
+        case KC_DEAD:
+            if (record->event.pressed) {
+                accent_enabled = true;
+                return false;
+            }
+            break;
+    }
+    return true;
 }
