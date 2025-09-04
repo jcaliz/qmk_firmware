@@ -100,10 +100,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_RRAISE] = LAYOUT_ortho_4x12(
-        KC_GRV,   KC_EXLM,  KC_AT,    KC_HASH,  KC_PERC,  KC_LCBR,     KC_RCBR,  KC_AMPR,  KC_CIRC,  KC_PAST,  KC_QUES,  KC_TRNS,
-        KC_DEL,   KC_QUOT,  KC_LPRN,  KC_RPRN,  KC_UNDS,  KC_MINS,     KC_DLR,   KC_EQL,   KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
-        KC_TRNS,  KC_PPLS,  KC_NO,    KC_NO,    KC_NO,    KC_DEAD,     KC_TILD,  KC_LT,    KC_GT,    KC_BSLS,  KC_PIPE,  KC_TRNS,
-        KC_1,     KC_TRNS,  KC_TRNS,  KC_TRNS,  MO(3),    KC_TRNS,     KC_TRNS,  KC_TRNS,  KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
+        KC_GRV,   KC_EXLM,  KC_AT,    KC_HASH,  KC_PERC,  KC_LCBR,     KC_RCBR,  KC_AMPR,  KC_CIRC,  LSFT(KC_8),  KC_QUES,  KC_TRNS,
+        KC_DEL,   KC_QUOT,  KC_LPRN,  KC_RPRN,  KC_UNDS,  KC_MINS,     KC_DLR,   KC_EQL,   KC_LBRC,  KC_RBRC,     KC_SLSH,  KC_TRNS,
+        KC_TRNS,  KC_PPLS,  KC_NO,    KC_NO,    KC_NO,    KC_DEAD,     KC_TILD,  KC_LT,    KC_GT,    KC_BSLS,     KC_PIPE,  KC_TRNS,
+        KC_1,     KC_TRNS,  KC_TRNS,  KC_TRNS,  MO(3),    KC_TRNS,     KC_TRNS,  KC_TRNS,  KC_MNXT,  KC_VOLD,     KC_VOLU,  KC_MPLY
     ),
 
     [_SYSTEM] = LAYOUT_ortho_4x12(
@@ -169,7 +169,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case PLOVER:
             #ifdef RGB_MATRIX_CUSTOM_USER
-                rgb_matrix_mode(RGB_MATRIX_CUSTOM_STARLIGHT);
+                rgb_matrix_mode(RGB_MATRIX_CUSTOM_MATRIX_SCREEN);
             #endif
             return false;
         break;

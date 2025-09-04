@@ -3,7 +3,7 @@ MOUSEKEY_ENABLE = no
 AUDIO_SUPPORTED = no
 
 ## Debug
-# CONSOLE_ENABLE = yes # enable debug
+CONSOLE_ENABLE = yes # enable debug
 # KEYCODE_STRING_ENABLE = yes # enable keycode string for easier debugging
 
 # RGB
