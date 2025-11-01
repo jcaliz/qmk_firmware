@@ -117,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SYSTEM] = LAYOUT_ortho_4x12(
         QK_BOOT,  UG_TOGG,  UG_HUEU,  UG_SATU,  UG_VALU,  DF(_DVORAK),  KC_TRNS,  KC_F7,    KC_F8,  KC_F9,  KC_F10,  DB_TOGG,
-        PLOVER,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  DF(_QWERTY),  AG_SWAP,  KC_F4,    KC_F5,  KC_F6,  KC_F11,  UC_LINX,
+        PLOVER,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  DF(_QWERTY),  KC_TRNS,  KC_F4,    KC_F5,  KC_F6,  KC_F11,  UC_LINX,
         KC_TEST,  UG_PREV,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_F1,    KC_F2,  KC_F3,  KC_F12,  UC_NEXT,
         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_MRWD,  KC_TRNS,  KC_TRNS,  KC_MFFD
     ),
@@ -126,7 +126,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void send_accented(enum unicode_names lower, enum unicode_names upper) {
     bool shifted = get_mods() & MOD_MASK_SHIFT;
+    uprintf("Unicode input mode: %d\n", get_unicode_input_mode());
     uint32_t codepoint = shifted ? unicode_map[upper] : unicode_map[lower];
+    uprintf("%lu (dec), 0x%lX (hex)\n", codepoint, codepoint);
     register_unicode(codepoint);
     accent_enabled = false;
 }
@@ -189,6 +191,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_DEAD:
             if (record->event.pressed) {
                 accent_enabled = true;
+                uprintf("Accent enabled");
                 return false;
             }
             break;
