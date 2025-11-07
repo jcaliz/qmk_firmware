@@ -12,11 +12,13 @@
   * GNU General Public License for more details.
   * */
 
+#include "keycodes.h"
 #include QMK_KEYBOARD_H
 enum layers {
   _DVORAK,
   _LRAISE,
   _RRAISE,
+  _RRAISE2,
   _SYSTEM,
 };
 
@@ -30,28 +32,37 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_CUSTOM_TAB,   KC_QUOT,  KC_COMM,  KC_DOT,   KC_P,         KC_Y,    KC_F,    KC_G,   KC_C,     KC_R,     KC_L,   KC_BSPC,
         KC_ESC,   KC_A,     KC_O,     KC_E,     KC_U,         KC_I,    KC_D,    KC_H,   KC_T,     KC_N,     KC_S,   KC_ENT,
         KC_LSFT,  KC_SCLN,  KC_Q,     KC_J,     KC_K,         KC_X,    KC_B,    KC_M,   KC_W,     KC_V,     KC_Z,   KC_RSFT,
-        KC_LCTL,  KC_LALT,  KC_LGUI,  MO(_LRAISE),    KC_SPC, KC_SPC,   KC_SPC,  MO(_RRAISE),  KC_NO, KC_NO,  KC_GRV
+        KC_LCTL,  KC_LALT,  KC_LGUI,  MO(_LRAISE),    KC_SPC, KC_SPC,   KC_SPC,  MO(_RRAISE),  MO(_RRAISE2), KC_NO,  KC_GRV
     ),
 
     [_LRAISE] = LAYOUT(
-        RCS(KC_TAB),  LGUI(KC_R),  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB), KC_NO,    KC_NO,   KC_CIRC,    KC_NO,    KC_NO,  KC_NO,
+        RCS(KC_TAB),  LGUI(KC_R),  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB), KC_NO,    KC_NO,   KC_CIRC,    KC_NO,    KC_NO,  KC_BSPC,
         KC_DEL,       LGUI(KC_C),  KC_6,     KC_5,     KC_4,     KC_NO,         KC_NO,    KC_EQL,  KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
         KC_TRNS,      LGUI(KC_V),  KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_PIPE,  KC_TRNS,
         KC_TRNS,      LGUI(KC_W),  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,       KC_TRNS,  MO(_SYSTEM),   KC_MNXT,  KC_VOLD, KC_TRNS
     ),
 
     [_RRAISE] = LAYOUT(
-        KC_GRV,   KC_EXLM,  KC_AT,    KC_HASH,  KC_PERC,  KC_LCBR,     KC_RCBR,  KC_AMPR,  KC_UP,  LSFT(KC_8),  KC_QUES, KC_NO,
-        KC_DEL,   KC_QUOT,  KC_LPRN,  KC_RPRN,  KC_UNDS,  KC_MINS,     KC_DLR,   KC_LEFT,   KC_DOWN,  KC_RIGHT,     KC_SLSH,  KC_TRNS,
+
+        KC_GRV,   KC_EXLM,  KC_AT,    KC_HASH,  KC_PERC,  KC_LCBR,     KC_RCBR,  KC_AMPR,  KC_CIRC,  LSFT(KC_8),  KC_QUES, KC_BSPC,
+        KC_DEL,   KC_QUOT,  KC_LPRN,  KC_RPRN,  KC_UNDS,  KC_MINS,     KC_DLR,   KC_EQUAL,   KC_LBRC,  KC_RBRC,     KC_SLSH,  KC_TRNS,
         KC_TRNS,  KC_PPLS,  KC_NO,    KC_NO,    KC_NO,    LALT(KC_E),     KC_TILD,  KC_LT,    KC_GT,    KC_BSLS,     KC_PIPE,  KC_TRNS,
         LCTL(KC_GRV),     KC_TRNS,  KC_TRNS,  MO(_SYSTEM),  KC_TRNS,    KC_TRNS,     KC_TRNS,  KC_TRNS,  KC_MNXT,  KC_VOLD,
     ),
 
+    [_RRAISE2] = LAYOUT(
+
+        KC_CALC,   KC_NO,  KC_NO,    KC_NO,  KC_NO,  KC_NO,     KC_NO,  KC_NO,  KC_UP,  KC_NO,  KC_NO,  KC_BSPC,
+        KC_DEL,   KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,     KC_NO,   KC_LEFT,   KC_DOWN,  KC_RIGHT,     KC_NO,  KC_NO,
+        KC_TRNS,  KC_NO,  KC_NO,    KC_NO,    KC_MPRV,   KC_MNXT,     KC_NO,  KC_VOLD,    KC_VOLU,    KC_NO,     KC_NO, KC_MPLY,
+        KC_NO,     KC_TRNS,  KC_TRNS,  MO(_SYSTEM),  KC_TRNS,    KC_TRNS,     KC_TRNS,  KC_TRNS,  KC_MNXT,  KC_VOLD,
+    ),
+
     [_SYSTEM] = LAYOUT(
-        QK_BOOT,  UG_TOGG,  UG_HUEU,  UG_SATU,  UG_VALU,  DF(_DVORAK),  KC_TRNS,  KC_F7,    KC_F8,  KC_F9,  KC_F10,
+        QK_BOOT,  UG_TOGG,  UG_HUEU,  UG_SATU,  UG_VALU,  DF(_DVORAK),  KC_TRNS,  KC_F7,    KC_F8,  KC_F9,  KC_F10, KC_NO,
         KC_TRNS,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  KC_TRNS,  KC_TRNS,  KC_F4,    KC_F5,  KC_F6,  KC_F11,  UC_LINX,
         KC_TRNS,  UG_PREV,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_F1,    KC_F2,  KC_F3,  KC_F12,  UC_NEXT,
-        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_MRWD,  KC_TRNS, KC_TRNS, KC_TRNS
+        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_MRWD,  KC_TRNS, KC_TRNS
     ),
 
 
