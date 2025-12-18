@@ -15,6 +15,7 @@
  */
 
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 #include "action.h"
 #include "keycodes.h"
 #include "quantum.h"
@@ -126,12 +127,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void send_accented(enum unicode_names lower, enum unicode_names upper) {
     bool shifted = get_mods() & MOD_MASK_SHIFT;
-    uprintf("Unicode input mode: %d\n", get_unicode_input_mode());
-    uint32_t codepoint = shifted ? unicode_map[upper] : unicode_map[lower];
-    uprintf("%lu (dec), 0x%lX (hex)\n", codepoint, codepoint);
-    register_unicode(codepoint);
+    enum unicode_names name = shifted ? upper : lower;
+
+    uint32_t cp = pgm_read_dword(&unicode_map[name]);
+
+    uprintf("Unicode index: %u, codepoint: 0x%08lX\n", name, cp);
+
+    register_unicode(cp);  // ✅ must pass the enum, NOT cp
     accent_enabled = false;
 }
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     #ifdef CONSOLE_ENABLE
