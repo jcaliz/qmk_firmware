@@ -16,14 +16,17 @@
 
 #include QMK_KEYBOARD_H
 
-// #ifdef AUDIO_ENABLE
-// #    include "muse.h"
-//   float imperial[][2] = IMPERIAL_SOUND;
-// #endif
+
+#ifdef AUDIO_ENABLE
+#    include "muse.h"
+float imperial[][2] = IMPERIAL_SOUND;
+float mac_chime[][2] = SONG(PLANCK_SOUND);
+float linux_chime[][2] = LINUX_SOUND;
+#endif
 
 enum custom_layers {
-  _DVORAK,
-  _QWERTY,
+  _DVORAK_MAC,
+  _DVORAK_LIN,
   _LRAISE,
   _RRAISE,
   _SYSTEM,
@@ -33,30 +36,37 @@ enum planck_keycodes {
   PLOVER = SAFE_RANGE,
   BACKLIT,
   EXT_PLV,
-  KC_TEST,
+  KC_REFRESH,
+  KC_CPY,
+  KC_PST,
+  KC_CLOSE,
+  TOGGLE_SO,
 };
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
 
-#define QWERTY PDF(_QWERTY)
-#define COLEMAK PDF(_COLEMAK)
-#define DVORAK PDF(_DVORAK)
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-    [_DVORAK] = LAYOUT_ortho_4x12(
+    [_DVORAK_MAC] = LAYOUT_ortho_4x12(
         KC_TAB,   KC_QUOT,  KC_COMM,  KC_DOT,   KC_P,         KC_Y,    KC_F,    KC_G,   KC_C,     KC_R,     KC_L,   KC_BSPC,
         KC_ESC,   KC_A,     KC_O,     KC_E,     KC_U,         KC_I,    KC_D,    KC_H,   KC_T,     KC_N,     KC_S,   KC_ENT,
         KC_LSFT,  KC_SCLN,  KC_Q,     KC_J,     KC_K,         KC_X,    KC_B,    KC_M,   KC_W,     KC_V,     KC_Z,   KC_RSFT,
         KC_LCTL,  KC_GRV,   KC_LALT,  KC_LGUI,  MO(_LRAISE),  KC_SPC,  KC_SPC,  MO(_RRAISE),  KC_LEFT,  KC_DOWN,  KC_UP,  KC_RGHT
     ),
 
+    [_DVORAK_LIN] = LAYOUT_ortho_4x12(
+        KC_TAB,   KC_QUOT,  KC_COMM,  KC_DOT,   KC_P,         KC_Y,    KC_F,    KC_G,   KC_C,     KC_R,     KC_L,   KC_BSPC,
+        KC_ESC,   KC_A,     KC_O,     KC_E,     KC_U,         KC_I,    KC_D,    KC_H,   KC_T,     KC_N,     KC_S,   KC_ENT,
+        KC_LSFT,  KC_SCLN,  KC_Q,     KC_J,     KC_K,         KC_X,    KC_B,    KC_M,   KC_W,     KC_V,     KC_Z,   KC_RSFT,
+        KC_LGUI,  KC_GRV,   KC_LALT,  KC_LCTL,  MO(_LRAISE),  KC_SPC,  KC_SPC,  MO(_RRAISE),  KC_LEFT,  KC_DOWN,  KC_UP,  KC_RGHT
+    ),
+
     [_LRAISE] = LAYOUT_ortho_4x12(
-        RCS(KC_TAB),  LGUI(KC_R),  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB),  KC_NO,    KC_NO,   KC_NO,    KC_NO,    KC_NO,    KC_BSPC,
-        KC_DEL,       LGUI(KC_C),  KC_6,     KC_5,     KC_4,     KC_NO,         KC_NO,    KC_EQL,  KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
-        KC_TRNS,      LGUI(KC_V),  KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_BSLS,  KC_TRNS,
-        KC_TRNS,      LGUI(KC_W),  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,       KC_TRNS,  MO(_SYSTEM),   KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
+        RCS(KC_TAB),  KC_REFRESH,  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB),  KC_NO,    KC_NO,   KC_NO,    KC_NO,    KC_NO,    KC_BSPC,
+        KC_DEL,       KC_COPY,     KC_6,     KC_5,     KC_4,     KC_NO,         KC_NO,    KC_EQL,  KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
+        KC_TRNS,      KC_PASTE,    KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_BSLS,  KC_TRNS,
+        KC_TRNS,      KC_CLOSE,    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,       KC_TRNS,  MO(_SYSTEM),   KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
     ),
 
     [_RRAISE] = LAYOUT_ortho_4x12(
@@ -67,12 +77,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_SYSTEM] = LAYOUT_ortho_4x12(
-        QK_BOOT,  UG_TOGG,  UG_HUEU,  UG_SATU,  UG_VALU,  KC_TRNS,      KC_TRNS,  KC_F7,    KC_F8,  KC_F9,  KC_F10,  DB_TOGG,
-        PLOVER,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  KC_TRNS,      KC_TRNS,  KC_F4,    KC_F5,  KC_F6,  KC_F11,  UC_LINX,
-        KC_TEST,  UG_PREV,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_F1,    KC_F2,  KC_F3,  KC_F12,  UC_NEXT,
+        QK_BOOT,  UG_TOGG,  UG_HUEU,  UG_SATU,  UG_VALU,  TOGGLE_SO,      KC_TRNS,  KC_F7,    KC_F8,  KC_F9,  KC_F10,  DB_TOGG,
+        PLOVER,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  KC_TRNS,        EE_CLR,  KC_F4,    KC_F5,  KC_F6,  KC_F11,  UC_LINX,
+        KC_TRNS,  UG_PREV,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_F1,    KC_F2,  KC_F3,  KC_F12,  UC_NEXT,
         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_MRWD,  KC_TRNS,  KC_TRNS,  KC_MFFD
     ),
-
 };
 
 
@@ -97,50 +106,59 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // }
 
 
-// bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//   switch (keycode) {
-//     case BACKLIT:
-//       if (record->event.pressed) {
-//         register_code(KC_RSFT);
-//         #ifdef BACKLIGHT_ENABLE
-//           backlight_step();
-//         #endif
-//         #ifdef KEYBOARD_planck_rev5
-//           gpio_write_pin_low(E6);
-//         #endif
-//       } else {
-//         unregister_code(KC_RSFT);
-//         #ifdef KEYBOARD_planck_rev5
-//           gpio_write_pin_high(E6);
-//         #endif
-//       }
-//       return false;
-//       break;
-//     case PLOVER:
-//       if (record->event.pressed) {
-//         #ifdef AUDIO_ENABLE
-//           stop_all_notes();
-//           audio_set_tempo(30);
-//           rgb_matrix_mode(RGB_MATRIX_CUSTOM_star_wars);
-//           PLAY_SONG(imperial);
-//         #endif
-//       }
-//       return false;
-//       break;
-//     case KC_TEST:
-//       if (record->event.pressed) {
-//         #ifdef AUDIO_ENABLE
-//           // stop_all_notes();
-//           // audio_set_tempo(30);
-//           rgb_matrix_mode(RGB_MATRIX_CUSTOM_star_wars);
-//           // PLAY_SONG(imperial);
-//         #endif
-//       }
-//       return false;
-//       break;
-//    }
-//   return true;
-// }
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    #ifdef CONSOLE_ENABLE
+        uprintf("KL: kc: %s, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", get_keycode_string(keycode), record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+    #endif 
+    switch (keycode) {
+    case BACKLIT:
+      if (record->event.pressed) {
+        register_code(KC_RSFT);
+        #ifdef BACKLIGHT_ENABLE
+          backlight_step();
+        #endif
+        #ifdef KEYBOARD_planck_rev5
+          gpio_write_pin_low(E6);
+        #endif
+      } else {
+        unregister_code(KC_RSFT);
+        #ifdef KEYBOARD_planck_rev5
+          gpio_write_pin_high(E6);
+        #endif
+      }
+      return false;
+      break;
+    case PLOVER:
+      if (record->event.pressed) {
+        #ifdef AUDIO_ENABLE
+          stop_all_notes();
+          audio_set_tempo(30);
+          PLAY_SONG(imperial);
+        #endif
+      }
+      return false;
+      break;
+    case TOGGLE_SO:
+      if (record->event.pressed) {
+        if (get_highest_layer(default_layer_state) == _DVORAK_MAC) {
+          // Switching to Linux
+          #ifdef AUDIO_ENABLE
+            PLAY_SONG(linux_chime);
+          #endif
+          set_single_persistent_default_layer(_DVORAK_LIN);
+        } else {
+          // Switching to Mac
+          #ifdef AUDIO_ENABLE
+            PLAY_SONG(mac_chime);
+          #endif
+          set_single_persistent_default_layer(_DVORAK_MAC);
+        }
+      }
+      return false;
+      break;
+   }
+  return true;
+}
 
 // bool muse_mode = false;
 // uint8_t last_muse_note = 0;
