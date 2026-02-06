@@ -20,7 +20,7 @@
 #ifdef AUDIO_ENABLE
 #    include "muse.h"
 float imperial[][2] = IMPERIAL_SOUND;
-float mac_chime[][2] = SONG(PLANCK_SOUND);
+float mac_chime[][2] = CAMPANELLA_SONG;
 float linux_chime[][2] = LINUX_SOUND;
 #endif
 
@@ -64,8 +64,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_LRAISE] = LAYOUT_ortho_4x12(
         RCS(KC_TAB),  KC_REFRESH,  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB),  KC_NO,    KC_NO,   KC_NO,    KC_NO,    KC_NO,    KC_BSPC,
-        KC_DEL,       KC_COPY,     KC_6,     KC_5,     KC_4,     KC_NO,         KC_NO,    KC_EQL,  KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
-        KC_TRNS,      KC_PASTE,    KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_BSLS,  KC_TRNS,
+        KC_DEL,       KC_CPY,     KC_6,     KC_5,     KC_4,     KC_NO,         KC_NO,    KC_EQL,  KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
+        KC_TRNS,      KC_PST,    KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_BSLS,  KC_TRNS,
         KC_TRNS,      KC_CLOSE,    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,       KC_TRNS,  MO(_SYSTEM),   KC_MNXT,  KC_VOLD,  KC_VOLU,  KC_MPLY
     ),
 
@@ -152,6 +152,46 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             PLAY_SONG(mac_chime);
           #endif
           set_single_persistent_default_layer(_DVORAK_MAC);
+        }
+      }
+      return false;
+      break;
+    case KC_REFRESH:
+      if (record->event.pressed) {
+        if (get_highest_layer(default_layer_state) == _DVORAK_MAC) {
+          tap_code16(LGUI(KC_R));
+        } else {
+          tap_code16(LCTL(KC_R));
+        }
+      }
+      return false;
+      break;
+    case KC_CPY:
+      if (record->event.pressed) {
+        if (get_highest_layer(default_layer_state) == _DVORAK_MAC) {
+          tap_code16(LGUI(KC_C));
+        } else {
+          tap_code16(LCTL(KC_C));
+        }
+      }
+      return false;
+      break;
+    case KC_PST:
+      if (record->event.pressed) {
+        if (get_highest_layer(default_layer_state) == _DVORAK_MAC) {
+          tap_code16(LGUI(KC_V));
+        } else {
+          tap_code16(LCTL(KC_V));
+        }
+      }
+      return false;
+      break;
+    case KC_CLOSE:
+      if (record->event.pressed) {
+        if (get_highest_layer(default_layer_state) == _DVORAK_MAC) {
+          tap_code16(LGUI(KC_W));
+        } else {
+          tap_code16(LCTL(KC_W));
         }
       }
       return false;
