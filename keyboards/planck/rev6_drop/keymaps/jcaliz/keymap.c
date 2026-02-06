@@ -19,8 +19,8 @@
 
 #ifdef AUDIO_ENABLE
 #    include "muse.h"
-float imperial[][2] = IMPERIAL_SOUND;
-float mac_chime[][2] = CAMPANELLA_SONG;
+// float imperial[][2] = IMPERIAL_SOUND;
+float mac_chime[][2] = MAC_SOUND;
 float linux_chime[][2] = LINUX_SOUND;
 #endif
 
@@ -128,16 +128,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
-    case PLOVER:
-      if (record->event.pressed) {
-        #ifdef AUDIO_ENABLE
-          stop_all_notes();
-          audio_set_tempo(30);
-          PLAY_SONG(imperial);
-        #endif
-      }
-      return false;
-      break;
+    // case PLOVER:
+    //   if (record->event.pressed) {
+    //     #ifdef AUDIO_ENABLE
+    //       stop_all_notes();
+    //       audio_set_tempo(30);
+    //       PLAY_SONG(imperial);
+    //     #endif
+    //   }
+    //   return false;
+    //   break;
     case TOGGLE_SO:
       if (record->event.pressed) {
         if (get_highest_layer(default_layer_state) == _DVORAK_MAC) {
