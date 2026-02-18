@@ -16,6 +16,9 @@
 
 #pragma once
 
+#define RGBLIGHT_LAYERS
+#define RGBLIGHT_LAYER_BLINK
+
 #define COMBO_COUNT 2
 #define COMBO_TERM 50
 #define TAPPING_FORCE_HOLD
