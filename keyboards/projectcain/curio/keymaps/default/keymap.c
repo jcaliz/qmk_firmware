@@ -49,6 +49,7 @@ enum my_keycodes {
     KC_PST,
     KC_CLOSE,
     TOGGLE_SO,
+    KC_PRINT_KEYMAP_URL,
 };
 
 
@@ -92,7 +93,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SYSTEM] = LAYOUT(
         QK_BOOT,  UG_TOGG,  UG_HUEU,  UG_SATU,  UG_VALU,  TOGGLE_SO,  KC_TRNS,  KC_F7,    KC_F8,  KC_F9,  KC_F10, DB_TOGG,
-        KC_TRNS,   UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  KC_TRNS,  KC_TRNS,  KC_F4,    KC_F5,  KC_F6,  KC_F11,  UC_LINX,
+        KC_PRINT_KEYMAP_URL,  UG_NEXT,  UG_HUED,  UG_SATD,  UG_VALD,  KC_TRNS,  KC_TRNS,  KC_F4,    KC_F5,  KC_F6,  KC_F11,  UC_LINX,
         KC_TRNS,  UG_PREV,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_F1,    KC_F2,  KC_F3,  KC_F12,  UC_NEXT,
         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_MRWD,  KC_TRNS, KC_TRNS
     ),
@@ -199,6 +200,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     tap_code16(LCTL(KC_W));
                 }
+            }
+            return false;
+            break;
+        case KC_PRINT_KEYMAP_URL:
+            if (record->event.pressed) {
+                SEND_STRING("https://github.com/jcaliz/qmk_firmware/blob/master/keyboards/projectcain/curio/keymaps/default/keymap.c");
             }
             return false;
             break;
