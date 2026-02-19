@@ -71,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_LRAISE] = LAYOUT(
         RCS(KC_TAB),  KC_REFRESH,  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB), KC_NO,     ALGR(KC_I),   ALGR(KC_C),    KC_NO,    KC_NO,  KC_BSPC,
         KC_DEL,       KC_CPY,      KC_6,     KC_5,     KC_4,     KC_NO,         KC_NO,    KC_EQL,  KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
-        KC_TRNS,      KC_PASTE,    KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_PIPE,  KC_TRNS,
+        KC_TRNS,      KC_PST,    KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_PIPE,  KC_TRNS,
         KC_TRNS,      KC_CLOSE,    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,       KC_TRNS,  MO(_SYSTEM),   KC_MNXT,  KC_VOLD, KC_TRNS
     ),
 
@@ -125,7 +125,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case KC_CUSTOM_TAB:
             if (record->event.pressed) {
-                if (mods & (MOD_BIT(KC_LALT) | MOD_BIT(KC_RALT))) {
+                if ((get_highest_layer(default_layer_state) == _DVORAK_MAC) && (mods & (MOD_BIT(KC_LALT) | MOD_BIT(KC_RALT)))) {
                     // Alt held: send Cmd + `
                     del_mods(MOD_BIT(KC_LALT) | MOD_BIT(KC_RALT));
                     register_code(KC_LGUI);
@@ -133,7 +133,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     unregister_code(KC_LGUI);
                     set_mods(mods);
                     return false;
-                } else {
+                }
+                else {
                     // No Alt: hold Tab normally
                     register_code(KC_TAB);
                     return false;
