@@ -69,7 +69,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_LRAISE] = LAYOUT(
-        RCS(KC_TAB),  KC_REFRESH,  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB), KC_NO,     ALGR(KC_I),   ALGR(KC_C),    KC_NO,    KC_NO,  KC_BSPC,
+        RCS(KC_TAB),  KC_REFRESH,  KC_3,     KC_2,     KC_1,     LCTL(KC_TAB), KC_NO,     ALGR(KC_I),   ALGR(KC_C),    KC_NO, ALGR(KC_SLSH),  KC_BSPC,
         KC_DEL,       KC_CPY,      KC_6,     KC_5,     KC_4,     KC_NO,         KC_NO,    KC_EQL,  KC_LBRC,  KC_RBRC,  KC_SLSH,  KC_TRNS,
         KC_TRNS,      KC_PST,    KC_9,     KC_8,     KC_7,     KC_0,          KC_NO,    KC_LT,   KC_GT,    KC_BSLS,  KC_PIPE,  KC_TRNS,
         KC_TRNS,      KC_CLOSE,    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,       KC_TRNS,  MO(_SYSTEM),   KC_MNXT,  KC_VOLD, KC_TRNS
@@ -82,7 +82,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TRNS,  KC_PPLS,  KC_NO,    KC_NO,    ALGR(KC_N),    ALGR(KC_E),     KC_TILD,  KC_LT,    KC_GT,    KC_BSLS,     KC_PIPE,  KC_TRNS,
         LCTL(KC_GRV),     KC_TRNS,  KC_TRNS,    MO(_SYSTEM),  KC_TRNS,    KC_TRNS,     KC_TRNS,  KC_TRNS,  KC_MNXT,  KC_VOLD,
     ),
-
+    
     [_RRAISE2] = LAYOUT(
 
         KC_CALC,   KC_NO,  KC_NO,    KC_NO,  KC_NO,  KC_NO,     KC_NO,  KC_NO,  KC_UP,  KC_NO,  KC_NO,  KC_BSPC,
